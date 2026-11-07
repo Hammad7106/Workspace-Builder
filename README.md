@@ -11,6 +11,8 @@ An interactive tool for digital nomads and startups in Bali to **design their dr
 - [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org) on [Vite](https://vite.dev)
 - [Tailwind CSS v4](https://tailwindcss.com) with a custom Bali-inspired theme (`src/index.css`)
 - [lucide-react](https://lucide.dev) icons
+- [Vitest](https://vitest.dev) for unit tests, [oxlint](https://oxc.rs) for linting
+- GitHub Actions CI (lint → test → type-check + build) on every PR
 - Deployed on [Vercel](https://vercel.com)
 
 ## Getting started
@@ -21,7 +23,11 @@ npm run dev       # start the dev server at http://localhost:5173
 npm run build     # type-check and build for production
 npm run preview   # serve the production build locally
 npm run lint      # lint with oxlint
+npm test          # run unit tests once (npm run test:watch to watch)
+npm run typecheck # type-check without building
 ```
+
+Requires Node 22.12+ (see `.nvmrc`).
 
 ## Project structure
 
@@ -30,8 +36,16 @@ src/
 ├── components/   # shared, app-wide UI (layout, primitives)
 ├── config/       # site/brand constants
 ├── features/     # feature modules
+│   ├── catalog/  #   product types, catalog data and lookups
 │   ├── builder/  #   product picker (tabs + product cards)
 │   ├── preview/  #   live workspace scene
 │   └── checkout/ #   summary bar + checkout flow
-└── lib/          # pure helpers (formatting, pricing, …)
+└── lib/          # pure helpers (price formatting, quote calculation)
 ```
+
+## Pricing model
+
+Mirrors monis.rent: prices are in **USD**, billed **weekly or monthly**, and the monthly
+plan is roughly 30–40% cheaper than paying weekly. Money is stored as integer cents to
+avoid floating-point rounding errors. Catalog prices are illustrative, calibrated to
+monis.rent's published "from" prices.
