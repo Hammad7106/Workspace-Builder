@@ -29,6 +29,20 @@
   --color-ink-900: #1c1a17;
   --color-ink-600: #5c564d;
   --color-ink-400: #8f877b;
+
+  /* Items pop into the workspace preview with a little overshoot. */
+  --animate-pop-in: pop-in 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-28px) scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 }
 
 @layer base {

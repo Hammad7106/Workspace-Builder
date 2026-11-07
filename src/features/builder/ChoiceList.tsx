@@ -1,8 +1,8 @@
 import { Check } from 'lucide-react'
-import type { BillingPeriod, Product } from '@/features/catalog'
+import type { BillingPeriod, CatalogProduct } from '@/features/catalog'
 import { ProductCardBody } from './ProductCardBody'
 
-interface ChoiceListProps<P extends Product> {
+interface ChoiceListProps<P extends CatalogProduct> {
   products: readonly P[]
   selectedId: P['id'] | null
   period: BillingPeriod
@@ -11,7 +11,7 @@ interface ChoiceListProps<P extends Product> {
 }
 
 /** Pick-one list for desks and chairs. Clicking the selected card clears it. */
-export function ChoiceList<P extends Product>({ products, selectedId, period, onSelect }: ChoiceListProps<P>) {
+export function ChoiceList<P extends CatalogProduct>({ products, selectedId, period, onSelect }: ChoiceListProps<P>) {
   return (
     <ul className="flex flex-col gap-2">
       {products.map((product) => {

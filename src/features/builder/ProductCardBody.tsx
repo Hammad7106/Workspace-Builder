@@ -1,9 +1,9 @@
-import type { BillingPeriod, Product } from '@/features/catalog'
+import type { BillingPeriod, CatalogProduct } from '@/features/catalog'
 import { PriceTag } from './PriceTag'
 import { ProductThumbnail } from './ProductThumbnail'
 
 /** The shared inside of every product card: thumbnail, name, pitch, highlights and price. */
-export function ProductCardBody({ product, period }: { product: Product; period: BillingPeriod }) {
+export function ProductCardBody({ product, period }: { product: CatalogProduct; period: BillingPeriod }) {
   return (
     <span className="flex w-full items-start gap-3 text-left">
       <ProductThumbnail product={product} />

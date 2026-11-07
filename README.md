@@ -39,7 +39,7 @@ src/
 │   ├── catalog/  #   product types, catalog data and lookups
 │   ├── workspace/#   setup state: reducer, rules, selectors, persistence
 │   ├── builder/  #   product picker: accessible tabs, product cards, quantity steppers
-│   ├── preview/  #   live workspace scene
+│   ├── preview/  #   live SVG scene: artwork, layout engine, animations
 │   └── checkout/ #   summary bar + checkout flow
 └── lib/          # pure helpers (price formatting, quote calculation)
 ```
@@ -62,3 +62,20 @@ pure function that is tested without rendering anything.
 - **Separate contexts** for state and actions, so components that only dispatch never re-render.
 - **Persistence**: the setup is saved to `localStorage` and validated when it's loaded back,
   so a corrupt value or a removed product never breaks the app.
+
+## Live preview
+
+The workspace is a hand-drawn SVG scene (`src/features/preview`) that redraws from the
+setup state, with no images to load and crisp at any size.
+
+- **One artwork per product**, keyed by product id (`art/registry.ts`). Adding a product
+  without artwork is a compile error. The same artwork is used for the product-card thumbnails.
+- **Layout is a pure function** (`layout.ts`) that turns the setup into positions:
+  desks are drawn to scale from their real widths, monitors share the space the lamp and
+  plant leave free and shrink to fit, and a second plant moves to the floor. Unit-tested.
+- **Motion with plain CSS**: new items pop in, and moved items glide to their new spot
+  (e.g. monitors re-spacing on a wider desk). Both are off when the user has "reduce
+  motion" turned on.
+- **Accessible**: the scene's accessible name describes the full setup, and a one-line
+  summary is announced as it changes.
+
