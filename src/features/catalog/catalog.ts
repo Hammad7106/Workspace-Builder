@@ -3,11 +3,15 @@ import {
   CHAIRS,
   DESKS,
   type AccessoryId,
+  type CatalogAccessory,
+  type CatalogChair,
+  type CatalogDesk,
+  type CatalogProduct,
   type ChairId,
   type DeskId,
   type ProductId,
 } from './products'
-import type { Accessory, Category, Chair, Desk, Product } from './types'
+import type { Category } from './types'
 
 /** Category tabs, in display order. */
 export const CATEGORIES = [
@@ -17,15 +21,15 @@ export const CATEGORIES = [
 ] as const satisfies readonly { id: Category; label: string }[]
 
 /** Every rentable product, in display order. */
-export const PRODUCTS: readonly Product[] = [...DESKS, ...CHAIRS, ...ACCESSORIES]
+export const PRODUCTS: readonly CatalogProduct[] = [...DESKS, ...CHAIRS, ...ACCESSORIES]
 
-const indexById = <T extends Product>(products: readonly T[]) =>
+const indexById = <T extends CatalogProduct>(products: readonly T[]) =>
   new Map<string, T>(products.map((product) => [product.id, product]))
 
 const productsById = indexById(PRODUCTS)
-const desksById = indexById<Desk>(DESKS)
-const chairsById = indexById<Chair>(CHAIRS)
-const accessoriesById = indexById<Accessory>(ACCESSORIES)
+const desksById = indexById<CatalogDesk>(DESKS)
+const chairsById = indexById<CatalogChair>(CHAIRS)
+const accessoriesById = indexById<CatalogAccessory>(ACCESSORIES)
 
 /*
  * Type guards for ids that come from untrusted input (URL params, localStorage).
@@ -42,16 +46,16 @@ export const isAccessoryId = (id: unknown): id is AccessoryId =>
  * Lookups by known-valid id. Every id type is derived from the catalog arrays,
  * so these lookups cannot miss.
  */
-export const getProduct = (id: ProductId): Product => productsById.get(id)!
-export const getDesk = (id: DeskId): Desk => desksById.get(id)!
-export const getChair = (id: ChairId): Chair => chairsById.get(id)!
-export const getAccessory = (id: AccessoryId): Accessory => accessoriesById.get(id)!
+export const getProduct = (id: ProductId): CatalogProduct => productsById.get(id)!
+export const getDesk = (id: DeskId): CatalogDesk => desksById.get(id)!
+export const getChair = (id: ChairId): CatalogChair => chairsById.get(id)!
+export const getAccessory = (id: AccessoryId): CatalogAccessory => accessoriesById.get(id)!
 
 /** All products in a category, in display order. */
 export function getProductsByCategory<C extends Category>(
   category: C,
-): Extract<Product, { category: C }>[] {
+): Extract<CatalogProduct, { category: C }>[] {
   return PRODUCTS.filter(
-    (product): product is Extract<Product, { category: C }> => product.category === category,
+    (product): product is Extract<CatalogProduct, { category: C }> => product.category === category,
   )
 }

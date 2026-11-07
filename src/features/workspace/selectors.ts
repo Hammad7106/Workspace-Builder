@@ -1,10 +1,10 @@
-import { ACCESSORIES, getChair, getDesk, type AccessoryId, type Product } from '@/features/catalog'
+import { ACCESSORIES, getChair, getDesk, type AccessoryId, type CatalogProduct } from '@/features/catalog'
 import { calculateQuote, type Quote } from '@/lib/pricing'
 import type { WorkspaceState } from './state'
 
 /** One row of the setup, as shown in the summary and checkout. */
 export interface SetupLine {
-  readonly product: Product
+  readonly product: CatalogProduct
   readonly quantity: number
 }
 

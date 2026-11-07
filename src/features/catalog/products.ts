@@ -151,5 +151,8 @@ export type ChairId = (typeof CHAIRS)[number]['id']
 export type AccessoryId = (typeof ACCESSORIES)[number]['id']
 export type ProductId = DeskId | ChairId | AccessoryId
 
+export type CatalogDesk = (typeof DESKS)[number]
+export type CatalogChair = (typeof CHAIRS)[number]
+export type CatalogAccessory = (typeof ACCESSORIES)[number]
 /** A product exactly as defined in the catalog, with its literal id (e.g. for artwork lookups). */
-export type CatalogProduct = (typeof DESKS)[number] | (typeof CHAIRS)[number] | (typeof ACCESSORIES)[number]
+export type CatalogProduct = CatalogDesk | CatalogChair | CatalogAccessory

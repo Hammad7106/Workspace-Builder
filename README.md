@@ -4,7 +4,7 @@ An interactive tool for digital nomads and startups in Bali to **design their dr
 
 > 🚧 Work in progress — the write-up (approach, tech choices, future improvements) is added in the final batch.
 
-**Live demo:** _coming soon_
+**Live demo:** https://workspace-builder-swart.vercel.app
 
 ## Tech stack
 
@@ -40,7 +40,7 @@ src/
 │   ├── workspace/#   setup state: reducer, rules, selectors, persistence
 │   ├── builder/  #   product picker: accessible tabs, product cards, quantity steppers
 │   ├── preview/  #   live SVG scene: artwork, layout engine, animations
-│   └── checkout/ #   summary bar + checkout flow
+│   └── checkout/ #   summary bar + checkout drawer (review → details → confirmation)
 └── lib/          # pure helpers (price formatting, quote calculation)
 ```
 
@@ -78,4 +78,19 @@ setup state, with no images to load and crisp at any size.
   motion" turned on.
 - **Accessible**: the scene's accessible name describes the full setup, and a one-line
   summary is announced as it changes.
+
+## Checkout
+
+"Rent your setup" opens a checkout drawer (`src/features/checkout`) in three steps:
+
+1. **Review**: the setup as a receipt, weekly/monthly billing, rental length (1–12 periods) and totals.
+2. **Details**: name, email, WhatsApp number, Bali delivery area, address and delivery date
+   (next day at the earliest). Fields are checked when you leave them and when you submit;
+   errors are announced, and focus jumps to the first problem.
+3. **Confirmation**: a reference number and what happens next.
+
+The drawer is a native `<dialog>` opened with `showModal()`, which provides focus trapping,
+Esc to close and an inert background without extra libraries. There is no backend, so
+`submitRentalRequest` in `api.ts` simulates the request. It is the single place to plug in a
+real endpoint or a WhatsApp hand-off.
 
