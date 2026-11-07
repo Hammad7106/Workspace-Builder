@@ -31,5 +31,6 @@ export function Field({ id, label, error, hint, optional, children }: FieldProps
   )
 }
 
+/** Inputs show a single green focus ring instead of the global outline plus a border colour. */
 export const inputClass =
-  'w-full rounded-xl border border-sand-300 bg-white px-3 py-2 text-sm transition placeholder:text-ink-400 focus:border-jungle-500 aria-invalid:border-sunset-500'
+  'w-full rounded-xl border border-sand-300 bg-white px-3 py-2 text-sm transition placeholder:text-ink-400 focus-visible:border-jungle-500 focus-visible:ring-3 focus-visible:ring-jungle-200 focus-visible:outline-none aria-invalid:border-sunset-500'

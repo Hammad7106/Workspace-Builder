@@ -2,7 +2,7 @@
 export const PALETTE = {
   outline: '#2b2620',
   ghost: '#c4ad86',
-  ghostText: '#8f877b',
+  ghostText: '#6f685d',
 
   metalDark: '#3d3b38',
   metalLight: '#e9e6df',

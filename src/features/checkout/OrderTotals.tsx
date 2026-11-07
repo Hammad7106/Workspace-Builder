@@ -14,24 +14,26 @@ interface OrderTotalsProps {
 /** Price breakdown: per period, saving, and the total for the booked term. */
 export function OrderTotals({ period, term, total, termTotal, savings }: OrderTotalsProps) {
   return (
-    <dl className="space-y-2 rounded-2xl bg-white p-4 text-sm ring-1 ring-sand-200">
-      <div className="flex justify-between gap-4">
-        <dt className="text-ink-600">Rent per {period}</dt>
-        <dd className="font-semibold">{formatPrice(total)}</dd>
-      </div>
-      {savings > 0 && (
-        <div className="flex justify-between gap-4 text-jungle-700">
-          <dt>Monthly saving vs weekly</dt>
-          <dd className="font-semibold">−{formatPrice(savings)}/mo</dd>
+    <div className="rounded-2xl bg-white p-4 text-sm ring-1 ring-sand-200">
+      <dl className="space-y-2">
+        <div className="flex justify-between gap-4">
+          <dt className="text-ink-600">Rent per {period}</dt>
+          <dd className="font-semibold">{formatPrice(total)}</dd>
         </div>
-      )}
-      <div className="flex justify-between gap-4 border-t border-sand-200 pt-2 text-base">
-        <dt className="font-bold">Total for {periodLabel(period, term)}</dt>
-        <dd className="font-extrabold">{formatPrice(termTotal)}</dd>
-      </div>
-      <p className="text-xs text-ink-400">
+        {savings > 0 && (
+          <div className="flex justify-between gap-4 text-jungle-700">
+            <dt>Monthly saving vs weekly</dt>
+            <dd className="font-semibold">−{formatPrice(savings)}/mo</dd>
+          </div>
+        )}
+        <div className="flex justify-between gap-4 border-t border-sand-200 pt-2 text-base">
+          <dt className="font-bold">Total for {periodLabel(period, term)}</dt>
+          <dd className="font-extrabold">{formatPrice(termTotal)}</dd>
+        </div>
+      </dl>
+      <p className="mt-2 text-xs text-ink-400">
         Delivery fee is confirmed with you before delivery. Extend or end your rental anytime.
       </p>
-    </dl>
+    </div>
   )
 }

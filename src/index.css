@@ -5,9 +5,15 @@
  * jungle  = primary brand green
  * sunset  = accent / call-to-action
  * sand    = page + surface neutrals
+ *
+ * Text colours meet WCAG AA (4.5:1) on every surface they are used on:
+ * ink-400 ≥ 4.8:1 on sand, sunset-600 text ≥ 4.8:1, white on sunset-500 = 4.6:1.
  */
+/* Phones and tablets in portrait with enough height to pin the preview while scrolling. */
+@custom-variant pin-preview (@media (width < 64rem) and (height >= 40rem));
+
 @theme {
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
   --color-jungle-50: #eef5f0;
   --color-jungle-100: #d6e8dc;
@@ -18,8 +24,8 @@
 
   --color-sunset-100: #fbe4d8;
   --color-sunset-400: #ec9670;
-  --color-sunset-500: #e07a4f;
-  --color-sunset-600: #c9603a;
+  --color-sunset-500: #bf5530;
+  --color-sunset-600: #a3492a;
 
   --color-sand-50: #fdfaf5;
   --color-sand-100: #f6efe3;
@@ -28,7 +34,7 @@
 
   --color-ink-900: #1c1a17;
   --color-ink-600: #5c564d;
-  --color-ink-400: #8f877b;
+  --color-ink-400: #6f685d;
 
   /* Items pop into the workspace preview with a little overshoot. */
   --animate-pop-in: pop-in 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;

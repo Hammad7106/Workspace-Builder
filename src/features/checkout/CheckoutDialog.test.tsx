@@ -34,10 +34,10 @@ function renderApp(initialState: WorkspaceState = setup) {
 }
 
 const rentButton = () => screen.getByRole('button', { name: /Rent your setup/ })
-const dialog = () => screen.getByRole('dialog')
+// The checkout chunk is lazy-loaded, so the dialog appears asynchronously on first open.
 const openCheckout = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.click(rentButton())
-  return dialog()
+  return screen.findByRole('dialog')
 }
 
 describe('opening checkout', () => {

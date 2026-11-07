@@ -24,7 +24,8 @@ can: they share a perspective, scale cleanly, weigh almost nothing and can be an
 same artwork doubles as the product thumbnails, so the cards match what appears in the scene.
 
 I built it in small, reviewable steps, each a PR with tests: scaffold → catalog, pricing &
-CI → state → picker → live preview → checkout.
+CI → state → picker → live preview → checkout → quick-start setups & share links →
+accessibility, performance and mobile polish.
 
 ### Tech choices
 
@@ -39,10 +40,13 @@ CI → state → picker → live preview → checkout.
 - **Native `<dialog>` for checkout** gives focus trapping, Esc to close and an inert
   background for free. No modal library needed.
 - **Plain CSS for motion** (pop-in, glide), switched off for users who prefer reduced motion.
-  No animation library, and the whole app ships at about 86 kB of gzipped JS.
+  No animation library: the app ships at about 84 kB of gzipped JS, and checkout is split
+  into its own 5 kB chunk that loads only when someone goes to rent.
 - **Tailwind CSS v4** with a small Bali palette (jungle, sunset, sand) as theme tokens.
-- **Quality:** 132 Vitest + React Testing Library tests (unit, component and full-app flows),
-  oxlint, GitHub Actions CI on every PR, deployed on Vercel.
+- **Quality:** 501 Vitest + React Testing Library tests (unit, component and full-app flows,
+  including 300 seeded runs of the random-setup generator), automated axe accessibility
+  checks, oxlint, and GitHub Actions CI on every PR. Lighthouse scores 100 for performance,
+  accessibility, best practices and SEO on both mobile and desktop.
 
 ### Trade-offs
 
@@ -52,7 +56,8 @@ CI → state → picker → live preview → checkout.
 - **A 2D front view, not 3D.** It reads well on a phone and stays light, but you can't rotate
   the room or drag items around.
 - **The catalog lives in code** (`products.ts`), and the setup is saved only in the
-  browser (`localStorage`), so it doesn't follow the user between devices.
+  browser (`localStorage`), so it doesn't follow the user between devices. Share links carry
+  the whole setup in the URL instead, so they need no server but aren't short.
 
 ### What I'd improve with more time
 
@@ -60,14 +65,12 @@ CI → state → picker → live preview → checkout.
   monis.rent works today), or send it through a small Vercel function that emails the team.
 - **Load the catalog from monis.rent's CMS**, with live prices, stock and bundle discounts,
   instead of a static file.
-- **Ready-made setups and sharing:** presets like "Nomad Starter" and "Triple-Monitor Pro",
-  a "Surprise me" button, and a shareable link to a setup. Saved setups are already validated
-  on load (`parseSetup`), which makes reading one from a URL a small step.
-- **More direct editing:** click an item in the scene to swap or remove it, add exit animations,
-  and on phones keep the preview pinned while the picker opens as a bottom sheet.
+- **Bundles and short links:** apply monis.rent's bundle discount to the ready-made setups,
+  and store shared setups server-side for short, tidy links.
+- **More direct editing:** click an item in the scene to swap or remove it, drag to rearrange
+  the desk, and add exit animations when something is removed.
 - **More testing and measurement:** Playwright end-to-end and visual-regression tests for the
-  scene, accessibility and Lighthouse checks in CI, and funnel analytics to see where people
-  drop off before renting.
+  scene, Lighthouse in CI, and funnel analytics to see where people drop off before renting.
 
 ## Tech stack
 
@@ -103,8 +106,11 @@ src/
 │   ├── workspace/#   setup state: reducer, rules, selectors, persistence
 │   ├── builder/  #   product picker: accessible tabs, product cards, quantity steppers
 │   ├── preview/  #   live SVG scene: artwork, layout engine, animations
+│   ├── presets/  #   ready-made setups and "Surprise me"
+│   ├── share/    #   share links: encode/decode a setup in the URL
 │   └── checkout/ #   summary bar + checkout drawer (review → details → confirmation)
-└── lib/          # pure helpers (price formatting, quote calculation)
+├── lib/          # pure helpers (price formatting, quote calculation)
+└── test/         # test helpers (dialog polyfill, seeded random)
 ```
 
 ## How it works
@@ -158,4 +164,30 @@ The drawer is a native `<dialog>` opened with `showModal()`, which provides focu
 Esc to close and an inert background without extra libraries. There is no backend, so
 `submitRentalRequest` in `api.ts` simulates the request. It is the single place to plug in a
 real endpoint or a WhatsApp hand-off.
+
+### Quick start & sharing
+
+- **Ready-made setups** (`src/features/presets`): Nomad Starter, Deep Focus, Triple-Monitor
+  Pro and Active Creator load in one tap, each showing its price for the current billing period.
+  Loading one over an existing setup offers **Undo**.
+- **Surprise me** builds a random setup that always follows the rules (a desk, a chair, at
+  least one monitor, nothing over its limits) and always differs from the current one.
+- **Share links** (`src/features/share`) keep the setup in readable parameters, e.g.
+  `?desk=desk-electric&chair=chair-ergonomic&item=monitor-24-fhd*2`. Opening one loads that
+  setup, then removes the parameters from the address bar so a refresh keeps your own edits.
+  Links go through the same validation as saved setups, so a hand-edited link can't break the
+  app. On phones, Share opens the native share sheet; elsewhere it copies the link.
+
+### Accessibility & performance
+
+- **Colour contrast:** every text colour meets WCAG AA (4.5:1) on the surfaces it's used on.
+- **Keyboard and screen readers:** tabs with arrow-key support, labelled controls, announced
+  totals and errors, focus moved to each new checkout step. axe-core runs over the builder and
+  every checkout step in the test suite.
+- **Fast first load:** the font is self-hosted (no render-blocking request to Google), and
+  checkout is lazy-loaded and starts downloading when the user hovers or focuses "Rent".
+- **Phones:** the preview pins to the top in a compact form, so you see each change while
+  scrolling through products.
+- **Link previews:** Open Graph and Twitter tags with a 1200×630 image (`public/og-image.png`)
+  rendered from the app's own scene.
 

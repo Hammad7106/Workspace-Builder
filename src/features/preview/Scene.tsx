@@ -36,7 +36,7 @@ function Placed({ x, y, scale = 1, productId, children }: PlacedProps) {
 }
 
 /** The live workspace illustration, redrawn from the setup state. */
-export function Scene({ state }: { state: WorkspaceState }) {
+export function Scene({ state, className }: { state: WorkspaceState; className?: string }) {
   const { desk, chair, accessories } = useMemo(() => layoutScene(state), [state])
   const DeskArt = desk.id && ART[desk.id].Art
   const ChairArt = chair.id && ART[chair.id].Art
@@ -47,7 +47,7 @@ export function Scene({ state }: { state: WorkspaceState }) {
       role="img"
       aria-label={describeSetup(state)}
       preserveAspectRatio="xMidYMax meet"
-      className="h-auto w-full"
+      className={`h-auto w-full ${className ?? ''}`}
     >
       <Backdrop />
       <g {...ART_STROKE}>

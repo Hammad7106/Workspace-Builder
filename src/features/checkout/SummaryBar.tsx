@@ -1,8 +1,11 @@
 import { ShoppingBag } from 'lucide-react'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { selectIsReadyToRent, useQuote, useWorkspaceState } from '@/features/workspace'
 import { formatPrice } from '@/lib/format'
-import { CheckoutDialog } from './CheckoutDialog'
+
+// Checkout is only needed once someone decides to rent, so it ships as its own chunk.
+const loadCheckout = () => import('./CheckoutDialog')
+const CheckoutDialog = lazy(() => loadCheckout().then((module) => ({ default: module.CheckoutDialog })))
 
 /** Sticky footer with the running total and the "Rent" call-to-action that opens checkout. */
 export function SummaryBar() {
@@ -10,6 +13,12 @@ export function SummaryBar() {
   const { itemCount, total, period, savings } = useQuote()
   const isReady = selectIsReadyToRent(state)
   const [isCheckoutOpen, setCheckoutOpen] = useState(false)
+  const [hasOpenedCheckout, setHasOpenedCheckout] = useState(false)
+
+  const openCheckout = () => {
+    setHasOpenedCheckout(true)
+    setCheckoutOpen(true)
+  }
 
   return (
     <div className="sticky bottom-0 z-20 border-t border-sand-200 bg-sand-50/90 backdrop-blur">
@@ -32,7 +41,10 @@ export function SummaryBar() {
         <button
           type="button"
           disabled={!isReady}
-          onClick={() => setCheckoutOpen(true)}
+          onClick={openCheckout}
+          // Start fetching the checkout chunk as soon as the user shows intent.
+          onPointerEnter={loadCheckout}
+          onFocus={loadCheckout}
           title={isReady ? undefined : 'Pick a desk and a chair to rent your setup'}
           className="inline-flex shrink-0 items-center gap-2 rounded-full bg-sunset-500 px-4 py-3 text-sm font-bold whitespace-nowrap text-white shadow-md transition hover:bg-sunset-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-5"
         >
@@ -41,7 +53,11 @@ export function SummaryBar() {
         </button>
       </div>
 
-      <CheckoutDialog open={isCheckoutOpen} onClose={() => setCheckoutOpen(false)} />
+      {hasOpenedCheckout && (
+        <Suspense fallback={null}>
+          <CheckoutDialog open={isCheckoutOpen} onClose={() => setCheckoutOpen(false)} />
+        </Suspense>
+      )}
     </div>
   )
 }

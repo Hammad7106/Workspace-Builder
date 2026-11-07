@@ -39,3 +39,9 @@ export function selectIsReadyToRent(state: WorkspaceState): boolean {
 export function selectIsEmpty(state: WorkspaceState): boolean {
   return !state.deskId && !state.chairId && Object.keys(state.accessories).length === 0
 }
+
+/** True when two setups contain exactly the same products (billing period is ignored). */
+export function selectIsSameSetup(a: WorkspaceState, b: WorkspaceState): boolean {
+  if (a.deskId !== b.deskId || a.chairId !== b.chairId) return false
+  return ACCESSORIES.every(({ id }) => (a.accessories[id] ?? 0) === (b.accessories[id] ?? 0))
+}

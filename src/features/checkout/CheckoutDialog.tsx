@@ -78,7 +78,7 @@ export function CheckoutDialog({ open, onClose }: CheckoutDialogProps) {
       onClick={(event) => event.target === event.currentTarget && close()}
       className="m-0 ml-auto h-dvh max-h-none w-full max-w-lg bg-sand-50 p-0 text-ink-900 shadow-2xl backdrop:bg-ink-900/40 backdrop:backdrop-blur-sm open:flex open:flex-col sm:rounded-l-3xl motion-safe:open:animate-slide-in"
     >
-      <header className="border-b border-sand-200 px-5 pt-5 pb-4 sm:px-6">
+      <div className="border-b border-sand-200 px-5 pt-5 pb-4 sm:px-6">
         <div className="flex items-start justify-between gap-4">
           <h2 id={titleId} ref={headingRef} tabIndex={-1} className="text-xl font-extrabold tracking-tight outline-none">
             {current.title}
@@ -107,7 +107,7 @@ export function CheckoutDialog({ open, onClose }: CheckoutDialogProps) {
             )
           })}
         </ol>
-      </header>
+      </div>
 
       {open && step === 'review' && (
         <ReviewStep term={term} onTermChange={setTerm} onContinue={() => goTo('details')} onEditSetup={close} />
