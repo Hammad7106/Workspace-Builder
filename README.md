@@ -2,9 +2,72 @@
 
 An interactive tool for digital nomads and startups in Bali to **design their dream workspace visually** — pick a desk, choose a chair, add monitors, a lamp, a plant — watch the setup come to life, then rent it in one tap.
 
-> 🚧 Work in progress — the write-up (approach, tech choices, future improvements) is added in the final batch.
-
 **Live demo:** https://workspace-builder-swart.vercel.app
+
+## Write-up
+
+### Approach
+
+I designed for the person in the brief: a freelancer who has just landed in Bali and wants
+a working setup by next week. They should *see* their office, not scroll a catalogue. So the
+live scene is the centre of the page, the picker sits beside it, the price is always visible
+in a sticky bar, and "Rent your setup" switches on once there's a desk and a chair.
+
+Before writing code I looked at monis.rent itself. It bills in **USD, weekly or monthly**,
+with monthly roughly 30–40% cheaper, and delivers next day across Bali. The pricing model,
+the weekly/monthly switch, the "Save X%" badges and the delivery step all follow that.
+Product prices are illustrative because the site doesn't show item prices publicly.
+
+For the visuals I drew my own SVG artwork instead of using monis.rent product photos.
+Photos taken from different angles can't be stacked into one believable scene. SVG pieces
+can: they share a perspective, scale cleanly, weigh almost nothing and can be animated. The
+same artwork doubles as the product thumbnails, so the cards match what appears in the scene.
+
+I built it in small, reviewable steps, each a PR with tests: scaffold → catalog, pricing &
+CI → state → picker → live preview → checkout.
+
+### Tech choices
+
+- **React 19 + TypeScript + Vite.** Product ids are literal types derived from the catalog,
+  so a typo in an id, or a product without artwork, is a compile error rather than a blank
+  spot in the scene.
+- **`useReducer` + context instead of a state library.** The setup is one small object. The
+  reducer and its business rules (one desk and chair, per-item limits, monitors capped by
+  desk width) are pure functions, tested without rendering anything.
+- **A pure layout function for the scene** (`layout.ts`) turns the setup into coordinates, so
+  the hard part of the preview is unit-tested and the drawing code stays simple.
+- **Native `<dialog>` for checkout** gives focus trapping, Esc to close and an inert
+  background for free. No modal library needed.
+- **Plain CSS for motion** (pop-in, glide), switched off for users who prefer reduced motion.
+  No animation library, and the whole app ships at about 86 kB of gzipped JS.
+- **Tailwind CSS v4** with a small Bali palette (jungle, sunset, sand) as theme tokens.
+- **Quality:** 132 Vitest + React Testing Library tests (unit, component and full-app flows),
+  oxlint, GitHub Actions CI on every PR, deployed on Vercel.
+
+### Trade-offs
+
+- **Sending a rental request is simulated.** There is no monis.rent API to call, so
+  `submitRentalRequest` (`src/features/checkout/api.ts`) waits a moment and returns a
+  reference number. It's the one function to replace with a real integration.
+- **A 2D front view, not 3D.** It reads well on a phone and stays light, but you can't rotate
+  the room or drag items around.
+- **The catalog lives in code** (`products.ts`), and the setup is saved only in the
+  browser (`localStorage`), so it doesn't follow the user between devices.
+
+### What I'd improve with more time
+
+- **Make the request real.** Either open WhatsApp with the order pre-filled (closest to how
+  monis.rent works today), or send it through a small Vercel function that emails the team.
+- **Load the catalog from monis.rent's CMS**, with live prices, stock and bundle discounts,
+  instead of a static file.
+- **Ready-made setups and sharing:** presets like "Nomad Starter" and "Triple-Monitor Pro",
+  a "Surprise me" button, and a shareable link to a setup. Saved setups are already validated
+  on load (`parseSetup`), which makes reading one from a URL a small step.
+- **More direct editing:** click an item in the scene to swap or remove it, add exit animations,
+  and on phones keep the preview pinned while the picker opens as a bottom sheet.
+- **More testing and measurement:** Playwright end-to-end and visual-regression tests for the
+  scene, accessibility and Lighthouse checks in CI, and funnel analytics to see where people
+  drop off before renting.
 
 ## Tech stack
 
@@ -44,14 +107,16 @@ src/
 └── lib/          # pure helpers (price formatting, quote calculation)
 ```
 
-## Pricing model
+## How it works
+
+### Pricing model
 
 Mirrors monis.rent: prices are in **USD**, billed **weekly or monthly**, and the monthly
 plan is roughly 30–40% cheaper than paying weekly. Money is stored as integer cents to
 avoid floating-point rounding errors. Catalog prices are illustrative, calibrated to
 monis.rent's published "from" prices.
 
-## State management
+### State management
 
 The setup lives in a single `useReducer` exposed through React context
 (`src/features/workspace`). No state library is needed at this size, and the reducer is a
@@ -63,7 +128,7 @@ pure function that is tested without rendering anything.
 - **Persistence**: the setup is saved to `localStorage` and validated when it's loaded back,
   so a corrupt value or a removed product never breaks the app.
 
-## Live preview
+### Live preview
 
 The workspace is a hand-drawn SVG scene (`src/features/preview`) that redraws from the
 setup state, with no images to load and crisp at any size.
@@ -79,7 +144,7 @@ setup state, with no images to load and crisp at any size.
 - **Accessible**: the scene's accessible name describes the full setup, and a one-line
   summary is announced as it changes.
 
-## Checkout
+### Checkout
 
 "Rent your setup" opens a checkout drawer (`src/features/checkout`) in three steps:
 
