@@ -11,7 +11,7 @@ An interactive tool for digital nomads and startups in Bali to **design their dr
 - [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org) on [Vite](https://vite.dev)
 - [Tailwind CSS v4](https://tailwindcss.com) with a custom Bali-inspired theme (`src/index.css`)
 - [lucide-react](https://lucide.dev) icons
-- [Vitest](https://vitest.dev) for unit tests, [oxlint](https://oxc.rs) for linting
+- [Vitest](https://vitest.dev) + [React Testing Library](https://testing-library.com/react) (jsdom) for unit and component tests, [oxlint](https://oxc.rs) for linting
 - GitHub Actions CI (lint → test → type-check + build) on every PR
 - Deployed on [Vercel](https://vercel.com)
 
@@ -38,7 +38,7 @@ src/
 ├── features/     # feature modules
 │   ├── catalog/  #   product types, catalog data and lookups
 │   ├── workspace/#   setup state: reducer, rules, selectors, persistence
-│   ├── builder/  #   product picker (tabs + product cards)
+│   ├── builder/  #   product picker: accessible tabs, product cards, quantity steppers
 │   ├── preview/  #   live workspace scene
 │   └── checkout/ #   summary bar + checkout flow
 └── lib/          # pure helpers (price formatting, quote calculation)
