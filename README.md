@@ -37,6 +37,7 @@ src/
 ├── config/       # site/brand constants
 ├── features/     # feature modules
 │   ├── catalog/  #   product types, catalog data and lookups
+│   ├── workspace/#   setup state: reducer, rules, selectors, persistence
 │   ├── builder/  #   product picker (tabs + product cards)
 │   ├── preview/  #   live workspace scene
 │   └── checkout/ #   summary bar + checkout flow
@@ -49,3 +50,15 @@ Mirrors monis.rent: prices are in **USD**, billed **weekly or monthly**, and the
 plan is roughly 30–40% cheaper than paying weekly. Money is stored as integer cents to
 avoid floating-point rounding errors. Catalog prices are illustrative, calibrated to
 monis.rent's published "from" prices.
+
+## State management
+
+The setup lives in a single `useReducer` exposed through React context
+(`src/features/workspace`). No state library is needed at this size, and the reducer is a
+pure function that is tested without rendering anything.
+
+- **Rules**: one desk and one chair; each accessory has a max quantity; all monitors
+  combined must fit the desk (switching to a smaller desk trims extra monitors).
+- **Separate contexts** for state and actions, so components that only dispatch never re-render.
+- **Persistence**: the setup is saved to `localStorage` and validated when it's loaded back,
+  so a corrupt value or a removed product never breaks the app.

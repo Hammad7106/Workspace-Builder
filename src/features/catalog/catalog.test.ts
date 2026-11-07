@@ -6,8 +6,14 @@ import {
   CHAIRS,
   DESKS,
   PRODUCTS,
+  getAccessory,
+  getChair,
+  getDesk,
   getProduct,
   getProductsByCategory,
+  isAccessoryId,
+  isChairId,
+  isDeskId,
   isProductId,
 } from '.'
 
@@ -68,5 +74,21 @@ describe('catalog lookups', () => {
   it('filters products by category in display order', () => {
     expect(getProductsByCategory('chair').map((chair) => chair.id)).toEqual(CHAIRS.map((chair) => chair.id))
     expect(getProductsByCategory('accessory').every((product) => product.category === 'accessory')).toBe(true)
+  })
+})
+
+describe('typed lookups', () => {
+  it('narrows ids to their category', () => {
+    expect(isDeskId('desk-electric')).toBe(true)
+    expect(isDeskId('chair-task')).toBe(false)
+    expect(isChairId('chair-task')).toBe(true)
+    expect(isAccessoryId('lamp-led')).toBe(true)
+    expect(isAccessoryId(42)).toBe(false)
+  })
+
+  it('returns category-specific products', () => {
+    expect(getDesk('desk-dual-motor').monitorCapacity).toBe(3)
+    expect(getChair('chair-ergonomic').category).toBe('chair')
+    expect(getAccessory('monitor-27-4k').slot).toBe('monitor')
   })
 })
